@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiogramx"
+version = "0.0.1"
+authors = [{ name = "Jasur Yusupov", email = "jasuryusupov14@gmail.com" }]
+maintainers = [{ name = "Jasur Yusupov", email = "jasuryusupov14@gmail.com" }]
+description = "Widgets and tools for Aiogram bots"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = ["aiogram>=3.0.0,<4.0.0"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries",
+]
+keywords = ["aiogram", "telegram", "bot", "widgets", "tools"]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/jzr-supove/aiogramx"
+Issues = "https://github.com/jzr-supove/aiogramx/issues"
+Repository = "https://github.com/jzr-supove/aiogramx.git"
