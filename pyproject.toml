@@ -25,3 +25,8 @@ license-files = ["LICEN[CS]E*"]
 Homepage = "https://github.com/jzr-supove/aiogramx"
 Issues = "https://github.com/jzr-supove/aiogramx/issues"
 Repository = "https://github.com/jzr-supove/aiogramx.git"
+
+[dependency-groups]
+dev = [
+    "aiogram>=3.20.0.post0",
+]
