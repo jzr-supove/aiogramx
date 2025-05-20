@@ -4,13 +4,16 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiogramx"
-version = "0.0.1"
+version = "3.0.0"
 authors = [{ name = "Jasur Yusupov", email = "jasuryusupov14@gmail.com" }]
 maintainers = [{ name = "Jasur Yusupov", email = "jasuryusupov14@gmail.com" }]
 description = "Widgets and tools for Aiogram bots"
 readme = "README.md"
 requires-python = ">=3.9"
-dependencies = ["aiogram>=3.0.0,<4.0.0"]
+dependencies = [
+    "aiogram>=3.0.0,<4.0.0",
+    "flipcache>=1.2",
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Framework :: AsyncIO",
@@ -29,4 +32,5 @@ Repository = "https://github.com/jzr-supove/aiogramx.git"
 [dependency-groups]
 dev = [
     "aiogram>=3.20.0.post0",
+    "flipcache>=1.2",
 ]
