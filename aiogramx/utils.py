@@ -1,4 +1,6 @@
-from typing import Union
+import inspect
+from contextlib import asynccontextmanager
+from typing import Union, Optional, Callable, Awaitable
 
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton
@@ -6,6 +8,8 @@ from aiogram.types import InlineKeyboardButton
 import string
 import random
 
+
+ExceptionHandler = Callable[[Exception], Union[None, Awaitable[None]]]
 
 # Character set: A-Z, a-z, 0-9, symbols
 punctuation = r"!#$%&*+,-./;<=>?@[\]^_{}~"
@@ -23,3 +27,14 @@ def ibtn(text: str, cb: Union[CallbackData, str]) -> InlineKeyboardButton:
     if isinstance(cb, CallbackData):
         cb = cb.pack()
     return InlineKeyboardButton(text=text, callback_data=cb)
+
+
+@asynccontextmanager
+async def silent_fail(on_exception: Optional[ExceptionHandler] = None):
+    try:
+        yield
+    except Exception as e:
+        if on_exception:
+            result = on_exception(e)
+            if inspect.isawaitable(result):
+                await result
