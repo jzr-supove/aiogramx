@@ -1,6 +1,6 @@
 import inspect
 from contextlib import asynccontextmanager
-from typing import Union, Optional, Callable, Awaitable
+from typing import Union, Optional, Callable, Awaitable, Literal
 
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import InlineKeyboardButton
@@ -10,11 +10,25 @@ import random
 
 
 ExceptionHandler = Callable[[Exception], Union[None, Awaitable[None]]]
+LangCode = Literal["en", "ru", "uz"]
+SUPPORTED_LANGS = {"en", "ru", "uz"}
 
 # Character set: A-Z, a-z, 0-9, symbols
 punctuation = r"!#$%&*+,-./;<=>?@[\]^_{}~"
 CHARSET = string.ascii_letters + string.digits + punctuation
 
+
+def fallback_lang(lang: Optional[LangCode]) -> LangCode:
+    """
+    Returns a fallback language code if the provided one is not supported.
+
+    Args:
+        lang (Optional[LangCode]): The language code to check.
+
+    Returns:
+        LangCode: A supported language code, defaults to 'en' if the input is None or unsupported.
+    """
+    return lang if lang in SUPPORTED_LANGS else "en"
 
 def gen_key(existing: dict, length: int = 5) -> str:
     while True:
