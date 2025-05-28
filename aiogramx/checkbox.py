@@ -14,18 +14,18 @@ from typing import Dict, TypedDict, Callable, Optional, Awaitable, Union, List
 _TEXTS = {
     "en": {
         "at_least_one": "At least one option must be selected!",
-        "done": "Done",
-        "back": "Back",
+        "done": "☑️ Done",
+        "back": "🔙 Back",
     },
     "ru": {
         "at_least_one": "Должен быть выбран хотя бы один вариант!",
-        "done": "Готово",
-        "back": "Назад",
+        "done": "☑️ Готово",
+        "back": "🔙 Назад",
     },
     "uz": {
         "at_least_one": "Kamida bitta variant tanlanishi kerak!",
-        "done": "Tayyor",
-        "back": "Orqaga",
+        "done": "☑️ Tayyor",
+        "back": "🔙 Orqaga",
     },
 }
 
@@ -168,13 +168,13 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         elif data.action == "DONE":
             if not self._can_select_none and not self.is_selected_any():
                 await c.answer(_TEXTS[self.lang]["at_least_one"])
-                if not self.__class__.__registered__:
+                if not self.is_registered:
                     return CheckboxResult(False)
                 return None
 
             if self.on_select:
                 await self.on_select(c, self._options)
-            elif self.__class__.__registered__:
+            elif self.is_registered:
                 await c.message.edit_text(
                     json.dumps(self._options, indent=2, ensure_ascii=False)
                 )
@@ -185,13 +185,13 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         elif data.action == "BACK":
             if self.on_back:
                 await self.on_back(c)
-            elif self.__class__.__registered__:
+            elif self.is_registered:
                 await c.message.delete()
                 await c.answer("Ok")
             else:
                 return CheckboxResult(True)
 
-        if not self.__class__.__registered__:
+        if not self.is_registered:
             return CheckboxResult(False)
         return None
 
@@ -217,14 +217,14 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         kb.adjust(2)
         kb.row(
             ibtn(
-                text=f"☑️ {_TEXTS[self.lang]['done']}",
+                text=_TEXTS[self.lang]["done"],
                 cb=self._cb(action="DONE", key=self._key),
             )
         )
         if self._has_back_button:
             kb.row(
                 ibtn(
-                    text=f"🔙 {_TEXTS[self.lang]['back']}",
+                    text=_TEXTS[self.lang]["back"],
                     cb=self._cb(action="BACK", key=self._key),
                 )
             )

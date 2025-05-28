@@ -14,8 +14,8 @@ LangCode = Literal["en", "ru", "uz"]
 SUPPORTED_LANGS = {"en", "ru", "uz"}
 
 # Character set: A-Z, a-z, 0-9, symbols
-punctuation = r"!#$%&*+,-./;<=>?@[\]^_{}~"
-CHARSET = string.ascii_letters + string.digits + punctuation
+PUNCTUATION = r"!#$%&*+,-./;<=>?@[\]^_{}~"
+CHARSET = string.ascii_letters + string.digits + PUNCTUATION
 
 
 def fallback_lang(lang: Optional[LangCode]) -> LangCode:
@@ -30,7 +30,9 @@ def fallback_lang(lang: Optional[LangCode]) -> LangCode:
     """
     return lang if lang in SUPPORTED_LANGS else "en"
 
+
 def gen_key(existing: dict, length: int = 5) -> str:
+    """Generates a unique key of specified length that does not exist in the provided dictionary."""
     while True:
         key = "".join(random.choice(CHARSET) for _ in range(length))
         if key not in existing:
@@ -38,6 +40,7 @@ def gen_key(existing: dict, length: int = 5) -> str:
 
 
 def ibtn(text: str, cb: Union[CallbackData, str]) -> InlineKeyboardButton:
+    """Generates an InlineKeyboardButton with the specified text and callback data."""
     if isinstance(cb, CallbackData):
         cb = cb.pack()
     return InlineKeyboardButton(text=text, callback_data=cb)
@@ -45,6 +48,7 @@ def ibtn(text: str, cb: Union[CallbackData, str]) -> InlineKeyboardButton:
 
 @asynccontextmanager
 async def silent_fail(on_exception: Optional[ExceptionHandler] = None):
+    """Asynchronous context manager that suppresses exceptions and optionally handles them with a callback."""
     try:
         yield
     except Exception as e:

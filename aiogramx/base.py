@@ -1,5 +1,7 @@
 from abc import abstractmethod, ABCMeta
 from typing import Optional, TypeVar, Generic, Type, Dict
+
+from aiogram import Router
 from aiogram.types import CallbackQuery
 from aiogram.filters.callback_data import CallbackData
 from flipcache import LRUDict
@@ -64,12 +66,12 @@ class WidgetBase(Generic[TCallbackData, TWidget], metaclass=WidgetMeta):
         TWidget: The type of the widget subclass.
 
     Attributes:
-        __registered__ (bool): Indicates whether this widget class has been registered with a router.
+        _registered (bool): Indicates whether this widget class has been registered with a router.
     """
 
     _cb: TCallbackData
     _storage: Dict[str, TWidget]
-    __registered__: bool = False
+    _registered: bool = False
 
     def __init_subclass__(cls, **kwargs):
         """
@@ -84,8 +86,10 @@ class WidgetBase(Generic[TCallbackData, TWidget], metaclass=WidgetMeta):
         """
         Initializes a new widget instance with a unique key and registers it in the class-level storage.
         """
+        print("initializing widget", self.__class__.__name__)
         self._key = gen_key(self.__class__._storage, length=4)
         self.__class__._storage[self._key] = self
+        print("storage size:", len(self.__class__._storage))
 
     @classmethod
     def from_cb(cls: Type[TWidget], callback_data: TCallbackData) -> Optional[TWidget]:
@@ -121,7 +125,7 @@ class WidgetBase(Generic[TCallbackData, TWidget], metaclass=WidgetMeta):
         return cls._cb.filter()
 
     @classmethod
-    def register(cls, router):
+    def register(cls, router: Router) -> None:
         """
         Registers this widget with an Aiogram router. Hooks into the callback query event
         and dispatches control to the widget instance if found, or shows an expired message otherwise.
@@ -129,7 +133,7 @@ class WidgetBase(Generic[TCallbackData, TWidget], metaclass=WidgetMeta):
         Args:
             router (aiogram.Router): The router to register the callback handler with.
         """
-        if cls.__registered__:
+        if cls._registered:
             return
 
         async def _handle(c: CallbackQuery, callback_data: TCallbackData):
@@ -141,7 +145,21 @@ class WidgetBase(Generic[TCallbackData, TWidget], metaclass=WidgetMeta):
             await instance.process_cb(c, callback_data)
 
         router.callback_query.register(_handle, cls.filter())
-        cls.__registered__ = True
+        cls._registered = True
+
+    @property
+    def is_registered(self) -> bool:
+        """
+        Indicates whether this widget's class has been registered with a router.
+
+        This property checks the `_registered` class-level flag to determine if the widget type
+        has already been registered via the `register()` method. Note that this reflects registration
+        status at the class level, not per instance.
+
+        Returns:
+            bool: True if the widget's class is registered, False otherwise.
+        """
+        return self.__class__._registered
 
     @classmethod
     def get_expired_text(cls, lang: str = "en") -> str:

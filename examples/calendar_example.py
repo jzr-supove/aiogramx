@@ -6,10 +6,10 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from asyncpg.pgproto.pgproto import timedelta
 
-import config
-from aiogramx.calendar import Calendar
+from config import BOT_TOKEN
+from aiogramx import Calendar
 
-bot = Bot(token=config.BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 Calendar.register(dp)
@@ -18,7 +18,9 @@ Calendar.register(dp)
 @dp.message(Command("calendar"))
 async def calendar_handler(m: Message):
     async def on_select(cq: CallbackQuery, date_obj: date):
-        await cq.message.edit_text(text=str(date_obj))
+        await cq.message.edit_text(
+            text="Selected date: " + date_obj.strftime("%Y-%m-%d")
+        )
 
     async def on_back(cq: CallbackQuery):
         await cq.message.edit_text(text="Canceled")
@@ -30,20 +32,6 @@ async def calendar_handler(m: Message):
         on_back=on_back,
     )
     await m.answer(text="Calendar Demo", reply_markup=await c.render_kb())
-
-
-# @dp.callback_query(Calendar.filter())
-# async def handle_calendar_callback(q: CallbackQuery, callback_data: Calendar.cb):
-#     c = Calendar()
-#     res = await c.process_cb(q, callback_data)
-#
-#     if not res.completed:
-#         return
-#
-#     if res.chosen_date:
-#         await q.message.answer(text=f"Chosen date: {res.chosen_date}")
-#     else:
-#         await q.message.edit_text(text="Pressed Back")
 
 
 async def main():

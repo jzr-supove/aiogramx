@@ -1,75 +1,113 @@
 # AiogramX
 
-Widgets and tools for bots built with Aiogram. Supports inline keyboards, paginators, and other helper UI components.
+[![PyPI version](https://img.shields.io/pypi/v/aiogramx.svg)](https://pypi.org/project/aiogramx/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Downloads](https://static.pepy.tech/personalized-badge/aiogramx?period=month&units=international_system&left_color=gray&right_color=blue&left_text=downloads/month)](https://pepy.tech/project/aiogramx)
+[![GitHub stars](https://img.shields.io/github/stars/jzr-supove/aiogramx?style=social)](https://github.com/jzr-supove/aiogramx)
+
+AiogramX is a modular collection of widgets and tools for building advanced Telegram bots using [Aiogram](https://aiogram.dev/). It simplifies the creation of user interfaces with inline keyboards, time selectors, calendars, paginators, and checkboxes — all with a clean API and optional callback handling.
+
+---
+
+## 🔗 Quick Links
+
+- 📦 [PyPI Package](https://pypi.org/project/aiogramx/)
+- 📚 [Documentation](https://github.com/jzr-supove/aiogramx/wiki) <!-- Optional -->
+- 🐛 [Issue Tracker](https://github.com/jzr-supove/aiogramx/issues)
+- 📬 [Submit Pull Request](https://github.com/jzr-supove/aiogramx/pulls)
+<!-- - 🤖 [Live Demo Bot](https://t.me/your_demo_bot) -->
+
+---
 
 
-## Time Selectors
-
-### Usage Example
-
-```python
-from aiogramx.time import TimeSelectorGrid
-
-
-@dp.message(F.text == "/grid")
-async def grid_kb_handler(m: Message):
-    await m.answer(
-        text="Time Selector Grid", reply_markup=TimeSelectorGrid().render_kb()
-    )
+## ✨ Features
+- Time selection widgets (grid and modern)
+- Paginator with lazy loading support
+- Interactive calendar with date selection
+- Versatile checkbox component
+- Easy integration and custom callbacks
+- Full compatibility with aiogram 3.x
 
 
-@dp.callback_query(TimeSelectorGrid.filter())
-async def time_selector_grid_handler(c: CallbackQuery, callback_data: Any) -> None:
-    ts = TimeSelectorGrid(allow_future_only=True)
-    result = await ts.handle_cb(query=c, data=callback_data)
+## 🚀 Why AiogramX?
 
-    if not result.completed:
-        return  # still waiting for user to select time
+AiogramX is designed with **performance and scalability** in mind. Unlike other widget libraries, it avoids common architectural pitfalls that can degrade your bot’s performance over time.
 
-    if result.chosen_time:
-        await c.message.edit_text(
-            text=f"Time selected: {result.chosen_time.strftime('%H:%M')}"
-        )
-    else:
-        await c.message.edit_text(text="Operation Canceled")
+### ✅ Efficient Callback Handling
+
+Most other libraries create **a new callback handler per widget instance**, which leads to:
+- 📈 **Handler bloat**: Thousands of handlers pile up as users interact with widgets
+- 🐢 **Slowdowns**: Aiogram has to iterate over a large handler list on every callback
+- 🗑️ **Memory waste**: Unused handlers remain registered, even after widgets are discarded 
+
+### 🧠 AiogramX does it differently
+
+AiogramX uses an internal **LRU (Least Recently Used) storage** mechanism (from [FlipCache](https://github.com/jzr-supove/flipcache)) to manage widget instances:
+- 🔁 **Single callback handler per widget type** (e.g. TimeSelector, Paginator) 
+- 🧹 **Old widget instances are automatically evicted** from memory after a limit (default: 1000)
+- 🧵 **Cleaner, more predictable handler lifecycle**
+- ⚡ **Improved performance** and **faster dispatching** of callbacks
+
+This architecture keeps your bot responsive, even under heavy usage.
+
+
+## 📦 Installation
+```bash
+pip install aiogramx
 ```
 
-### Other example
+## 📚 Components
+
+### ⏰  Time Selectors
+
+#### Basic usage
+
 ```python
-from aiogramx.time import TimeSelectorModern
+from aiogramx import TimeSelectorGrid
 
-ts_modern = TimeSelectorModern(
-    allow_future_only=True, 
-    past_time_warning="Selecting past time not allowed!"
-)
+TimeSelectorGrid.register(dp)
 
-@dp.message(F.text == "/modern")
-async def modern_kb_handler(m: Message):
+@dp.message(Command("grid"))
+async def grid_kb_handler(m: Message):
+    ts_grid = TimeSelectorGrid()
+    await m.answer(text="Time Selector Grid", reply_markup=ts_grid.render_kb())
+```
+
+#### Advanced usage with callback functions
+
+```python
+from aiogramx import TimeSelectorModern
+
+TimeSelectorModern.register(dp)
+
+@dp.message(Command("modern"))
+async def modern_ts_handler(m: Message):
+    async def on_select(c: CallbackQuery, time_obj: time):
+        await c.message.edit_text(text=f"Time selected: {time_obj.strftime('%H:%M')}")
+        await c.answer()
+
+    async def on_back(c: CallbackQuery):
+        await c.message.edit_text(text="Operation Canceled")
+        await c.answer()
+
+    ts_modern = TimeSelectorModern(
+        allow_future_only=True,
+        on_select=on_select,
+        on_back=on_back,
+        lang=m.from_user.language_code,
+    )
+
     await m.answer(
         text="Time Selector Modern",
         reply_markup=ts_modern.render_kb(offset_minutes=5),
     )
-    
-@dp.callback_query(ts_modern.filter())
-async def time_selector_handler(c: CallbackQuery, callback_data: Any) -> None:
-    result = await ts_modern.handle_cb(query=c, data=callback_data)
-
-    if not result.completed:
-        return
-
-    if result.chosen_time:
-        await c.message.edit_text(
-            text=f"Time selected: {result.chosen_time.strftime('%H:%M')}"
-        )
-    else:
-        await c.message.edit_text(text="Operation Canceled")
 ```
 
-## Paginator
+### 📄 Paginator
 
-### Basic Example
+#### Basic Example
 ```python
-from aiogramx.pagination import Paginator
+from aiogramx import Paginator
 
 Paginator.register(dp)
 
@@ -91,9 +129,10 @@ async def handle_buttons(c: CallbackQuery):
     await c.message.edit_text(text=f"Selected elem with callback '{c.data}'")
 ```
 
-### Example with `on_select` and `on_back` callback functions:
+#### Example with `on_select` and `on_back` callback functions
+
 ```python
-from aiogramx.pagination import Paginator
+from aiogramx import Paginator
 
 Paginator.register(dp)
 
@@ -118,9 +157,9 @@ async def pages_handler(m: Message):
     await m.answer(text="Pagination Demo", reply_markup=await pg.render_kb())
 ```
 
-### Example using lazy functions
+#### Example using lazy functions
 ```python
-from aiogramx.pagination import Paginator
+from aiogramx import Paginator
 
 Paginator.register(dp)
 
@@ -159,3 +198,94 @@ async def pages_handler(m: Message):
 
     await m.answer(text="Pagination Demo", reply_markup=await p.render_kb())
 ```
+
+### 📅 Calendar
+
+#### Usage example
+
+```python
+from aiogramx import Calendar
+
+Calendar.register(dp)
+
+@dp.message(Command("calendar"))
+async def calendar_handler(m: Message):
+    async def on_select(cq: CallbackQuery, date_obj: date):
+        await cq.message.edit_text(
+            text="Selected date: " + date_obj.strftime("%Y-%m-%d")
+        )
+
+    async def on_back(cq: CallbackQuery):
+        await cq.message.edit_text(text="Canceled")
+
+    c = Calendar(
+        max_range=timedelta(weeks=12),
+        show_quick_buttons=True,
+        on_select=on_select,
+        on_back=on_back,
+    )
+    await m.answer(text="Calendar Demo", reply_markup=await c.render_kb())
+```
+
+### ☑️ Checkbox
+
+#### Basic usage example
+
+```python
+from aiogramx import Checkbox
+
+Checkbox.register(dp)
+
+@dp.message(Command("checkbox2"))
+async def checkbox2_handler(m: Message):
+    ch = Checkbox(["Option 1", "Option 2", "Option 3"])
+    await m.answer(text="Checkbox Demo 2", reply_markup=await ch.render_kb())
+```
+
+#### Advanced usage example with callback functions
+
+```python
+from aiogramx import Checkbox
+
+Checkbox.register(dp)
+
+@dp.message(Command("checkbox"))
+async def checkbox_handler(m: Message):
+    async def on_select(cq: CallbackQuery, data: dict):
+        flag_map = {True: "✅", False: "❌"}
+
+        await cq.message.edit_text(
+            text=str(
+                "".join([f"{k}: {flag_map[v['flag']]}\n" for k, v in data.items()])
+            )
+        )
+
+    async def on_back(cq: CallbackQuery):
+        await cq.message.edit_text(text="You pressed the back button!")
+
+    options = {
+        "video_note": {
+            "text": "🎞",
+            "flag": True,
+        },
+        "voice": {
+            "text": "🔉",
+            "flag": False,
+        },
+        "test": None,
+        "other": {},
+    }
+
+    ch = Checkbox(
+        options=options,
+        on_select=on_select,
+        on_back=on_back,
+    )
+    await m.answer(text="Checkbox Demo", reply_markup=await ch.render_kb())
+```
+
+## 🧪 Contributing
+Contributions are welcome! If you'd like to add new widgets or improve existing ones, feel free to open issues or submit pull requests.
+
+## 📜 License
+This project is licensed under the MIT License. See the LICENSE file for more information.

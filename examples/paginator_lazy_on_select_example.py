@@ -5,15 +5,15 @@ from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message, InlineKeyboardButton
 
-import config
-from aiogramx.pagination import Paginator
+from config import BOT_TOKEN, POSTGRES_URL
+from aiogramx import Paginator
 
 
-bot = Bot(token=config.BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 pg_pool = asyncpg.create_pool(
-    dsn=config.POSTGRES_URL, max_size=500, max_inactive_connection_lifetime=5
+    dsn=POSTGRES_URL, max_size=500, max_inactive_connection_lifetime=5
 )
 
 Paginator.register(dp)

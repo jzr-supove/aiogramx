@@ -175,3 +175,9 @@ cython_debug/
 
 # PyCharm
 .idea
+
+# Development files
+config.py
+db.py
+main.py
+uv.lock

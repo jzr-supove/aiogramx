@@ -4,10 +4,10 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.filters import Command
 from aiogram.types import Message, InlineKeyboardButton, CallbackQuery
 
-import config
-from aiogramx.pagination import Paginator
+from config import BOT_TOKEN
+from aiogramx import Paginator
 
-bot = Bot(token=config.BOT_TOKEN)
+bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 
 
