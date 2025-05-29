@@ -7,11 +7,9 @@ from aiogram.filters import Command, CommandObject
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery, Message, InlineKeyboardButton, BotCommand
 
-from aiogramx import Checkbox, Calendar, TimeSelectorGrid, TimeSelectorModern
-from config import BOT_TOKEN
-from aiogramx.pagination import Paginator
-from demo.config import HELP_ARGS
-from demo.helper import extract_pager_data, extract_time_selector_data
+from aiogramx import Checkbox, Calendar, TimeSelectorGrid, TimeSelectorModern, Paginator
+from config import BOT_TOKEN, HELP_ARGS
+from helper import extract_pager_data, extract_time_selector_data
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
 dp = Dispatcher()

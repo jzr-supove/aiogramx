@@ -19,7 +19,7 @@ AiogramX is a modular collection of widgets and tools for building advanced Tele
 - 📚 [Documentation](https://github.com/jzr-supove/aiogramx/wiki)
 - 🐛 [Issue Tracker](https://github.com/jzr-supove/aiogramx/issues)
 - 📬 [Submit Pull Request](https://github.com/jzr-supove/aiogramx/pulls)
-- 🤖 [Live Demo Bot](https://t.me/aiogramx_demobot)
+- 🤖 [Live Demo Bot](https://t.me/aiogramx_demobot?start=github)
 
 </td>
 
