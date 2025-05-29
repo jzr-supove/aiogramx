@@ -16,10 +16,10 @@ AiogramX is a modular collection of widgets and tools for building advanced Tele
 #### Quick Links
 
 - 📦 [PyPI Package](https://pypi.org/project/aiogramx/)
-- 📚 [Documentation](https://github.com/jzr-supove/aiogramx/wiki) <!-- Optional -->
+- 📚 [Documentation](https://github.com/jzr-supove/aiogramx/wiki)
 - 🐛 [Issue Tracker](https://github.com/jzr-supove/aiogramx/issues)
 - 📬 [Submit Pull Request](https://github.com/jzr-supove/aiogramx/pulls)
-<!-- - 🤖 [Live Demo Bot](https://t.me/aiogramx_demobot) -->
+- 🤖 [Live Demo Bot](https://t.me/aiogramx_demobot)
 
 </td>
 
