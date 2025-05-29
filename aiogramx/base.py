@@ -86,10 +86,8 @@ class WidgetBase(Generic[TCallbackData, TWidget], metaclass=WidgetMeta):
         """
         Initializes a new widget instance with a unique key and registers it in the class-level storage.
         """
-        print("initializing widget", self.__class__.__name__)
         self._key = gen_key(self.__class__._storage, length=4)
         self.__class__._storage[self._key] = self
-        print("storage size:", len(self.__class__._storage))
 
     @classmethod
     def from_cb(cls: Type[TWidget], callback_data: TCallbackData) -> Optional[TWidget]:

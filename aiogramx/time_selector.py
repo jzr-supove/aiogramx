@@ -9,7 +9,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogramx.base import WidgetBase
-from aiogramx.utils import ibtn, LangCode, fallback_lang
+from aiogramx.utils import ibtn, fallback_lang
 
 EMOJI_CONTROL_BUTTONS = ("🔼", "🔽", "⏫", "⏬")
 ASCII_CONTROL_BUTTONS = ("^", "v", "^^", "vv")
@@ -57,7 +57,7 @@ class TimeSelectorBase(ABC, WidgetBase[TimeSelectorCB, "TimeSelectorBase"]):
         allow_future_only (bool): If True, restricts selection to future times.
         on_select (Optional[Callable[[CallbackQuery, time], Awaitable[None]]]): Callback on time selection.
         on_back (Optional[Callable[[CallbackQuery], Awaitable[None]]]): Callback on cancellation.
-        lang (LangCode): Language code for UI text.
+        lang (str): Language code for UI text.
         past_time_warn_text (Optional[str]): Custom warning for past time selection.
         control_buttons (Optional[List[str]]): Custom symbols for control buttons.
 
@@ -121,7 +121,7 @@ class TimeSelectorBase(ABC, WidgetBase[TimeSelectorCB, "TimeSelectorBase"]):
         allow_future_only: bool = False,
         on_select: Optional[Callable[[CallbackQuery, time], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
-        lang: Optional[LangCode] = "en",
+        lang: Optional[str] = "en",
         past_time_warn_text: Optional[str] = None,
         control_buttons: Optional[List[str]] = None,
     ):
@@ -300,7 +300,7 @@ class TimeSelectorGrid(TimeSelectorBase):
         allow_future_only: bool = False,
         on_select: Optional[Callable[[CallbackQuery, time], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
-        lang: Optional[LangCode] = "en",
+        lang: Optional[str] = "en",
         past_time_warn_text: Optional[str] = None,
         control_buttons: Optional[List[str]] = None,
     ):
@@ -375,7 +375,7 @@ class TimeSelectorModern(TimeSelectorBase):
         allow_future_only: bool = False,
         on_select: Optional[Callable[[CallbackQuery, time], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
-        lang: Optional[LangCode] = "en",
+        lang: Optional[str] = "en",
         past_time_warn_text: Optional[str] = None,
         control_buttons: Optional[List[str]] = None,
     ):

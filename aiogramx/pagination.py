@@ -6,7 +6,14 @@ from aiogram.types import InlineKeyboardButton, CallbackQuery, InlineKeyboardMar
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogramx.base import WidgetBase
-from aiogramx.utils import ibtn
+from aiogramx.utils import ibtn, fallback_lang
+
+
+_TEXTS = {
+    "en": {"back": "🔙 Back"},
+    "ru": {"back": "🔙 Назад"},
+    "uz": {"back": "🔙 Orqaga"},
+}
 
 
 class LazyButtonLoader(Protocol):
@@ -83,6 +90,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
         lazy_count: Optional[Callable[..., Awaitable[int]]] = None,
         on_select: Optional[Callable[[CallbackQuery, str], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
+        lang: Optional[str] = "en",
     ) -> None:
         if not (data or lazy_data):
             raise ValueError("You must provide either 'data' or 'lazy_data', not both.")
@@ -95,8 +103,13 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
                 "'lazy_count' must be provided when 'lazy_data' is provided."
             )
 
-        if per_page <= 0 or per_row <= 0:
-            raise ValueError("'per_page' and 'per_row' must be positive integers.")
+        # Validate per_row
+        if not (1 <= per_row <= 8):
+            raise ValueError("per_row must be between 1 and 8")
+
+        # Validate per_page
+        if not (1 <= per_page <= 94):
+            raise ValueError("per_page must be between 1 and 94")
 
         self.per_page = per_page
         self.per_row = per_row
@@ -107,6 +120,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
 
         self.on_select = on_select
         self.on_back = on_back
+        self.lang = fallback_lang(lang)
 
         super().__init__()
 
@@ -197,7 +211,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
 
         builder.row(first, left, info, right, last)
         if self.on_back:
-            builder.row(ibtn(text="🔙 Go Back", cb=self._(action="BACK")))
+            builder.row(ibtn(text=_TEXTS[self.lang]["back"], cb=self._(action="BACK")))
 
     async def render_kb(self, page: int = 1) -> InlineKeyboardMarkup:
         """Renders the complete inline keyboard for a given page.

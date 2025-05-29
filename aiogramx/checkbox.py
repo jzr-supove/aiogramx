@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogramx.base import WidgetBase
-from aiogramx.utils import ibtn, fallback_lang, LangCode
+from aiogramx.utils import ibtn, fallback_lang
 
 from typing import Dict, TypedDict, Callable, Optional, Awaitable, Union, List
 
@@ -43,10 +43,7 @@ class OptionMeta(TypedDict, total=False):
     flag: bool
 
 
-OptionsInput = Union[
-    List[str],
-    Dict[str, Optional[OptionMeta]],
-]
+OptionsInput = Union[List[str], Dict[str, Dict[str, Union[str, bool]]]]
 
 
 @dataclass
@@ -103,11 +100,11 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         options: OptionsInput,
         can_select_none: bool = False,
         has_back_button: bool = True,
-        lang: LangCode = "en",
+        lang: Optional[str] = "en",
         on_select: Optional[Callable[[CallbackQuery, dict], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
     ):
-        self._options: Dict[str, OptionMeta] = {}
+        self._options = {}
 
         if isinstance(options, list):
             for key in options:
@@ -195,7 +192,7 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
             return CheckboxResult(False)
         return None
 
-    async def render_kb(self):
+    def render_kb(self):
         """
         Builds and returns the inline keyboard markup for the checkbox interface.
 

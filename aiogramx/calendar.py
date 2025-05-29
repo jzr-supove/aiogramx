@@ -9,7 +9,7 @@ from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogramx.base import WidgetBase
-from aiogramx.utils import ibtn, LangCode, fallback_lang
+from aiogramx.utils import ibtn, fallback_lang
 
 _TEXTS = {
     "en": {
@@ -99,7 +99,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
             Callback function called when a date is selected.
         on_back (Optional[Callable[[CallbackQuery], Awaitable[None]]]):
             Callback function called when the back button is pressed.
-        lang (LangCode): Language code for localization.
+        lang (str): Language code for localization.
         warn_past_text (str): Text shown when a past date is selected and not allowed.
         warn_future_text (str): Text shown when a date outside the allowed future
             range is selected.
@@ -126,7 +126,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         show_quick_buttons: bool = False,
         on_select: Optional[Callable[[CallbackQuery, date], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
-        lang: LangCode = "en",
+        lang: Optional[str] = "en",
         warn_past_text: Optional[str] = None,
         warn_future_text: Optional[str] = None,
     ):
@@ -168,7 +168,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
 
         return _TEXTS[lang]["EXPIRED"]
 
-    async def render_kb(
+    def render_kb(
         self, year: Optional[int] = None, month: Optional[int] = None
     ) -> InlineKeyboardMarkup:
         """
@@ -385,7 +385,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         elif data.action == "PREV-YEAR":
             prev_date = date(data.year, data.month, 1) - timedelta(days=365)
             await c.message.edit_reply_markup(
-                reply_markup=await self.render_kb(prev_date.year, prev_date.month)
+                reply_markup=self.render_kb(prev_date.year, prev_date.month)
             )
             await c.answer()
 
@@ -393,7 +393,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         elif data.action == "NEXT-YEAR":
             next_date = date(data.year, data.month, 1) + timedelta(days=365)
             await c.message.edit_reply_markup(
-                reply_markup=await self.render_kb(next_date.year, next_date.month)
+                reply_markup=self.render_kb(next_date.year, next_date.month)
             )
             await c.answer()
 
@@ -401,7 +401,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         elif data.action == "PREV-MONTH":
             prev_date = date(data.year, data.month, 1) - timedelta(days=1)
             await c.message.edit_reply_markup(
-                reply_markup=await self.render_kb(prev_date.year, prev_date.month)
+                reply_markup=self.render_kb(prev_date.year, prev_date.month)
             )
             await c.answer()
 
@@ -409,7 +409,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         elif data.action == "NEXT-MONTH":
             next_date = date(data.year, data.month, 1) + timedelta(days=31)
             await c.message.edit_reply_markup(
-                reply_markup=await self.render_kb(next_date.year, next_date.month)
+                reply_markup=self.render_kb(next_date.year, next_date.month)
             )
             await c.answer()
 

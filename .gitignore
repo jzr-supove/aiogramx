@@ -177,6 +177,4 @@ cython_debug/
 .idea
 
 # Development files
-config.py
 db.py
-main.py
