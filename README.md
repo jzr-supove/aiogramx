@@ -5,26 +5,38 @@
 [![Downloads](https://static.pepy.tech/personalized-badge/aiogramx?period=month&units=international_system&left_color=gray&right_color=blue&left_text=downloads/month)](https://pepy.tech/project/aiogramx)
 [![GitHub stars](https://img.shields.io/github/stars/jzr-supove/aiogramx?style=social)](https://github.com/jzr-supove/aiogramx)
 
+<table>
+<tr>
+<td width="60%">
+    
 AiogramX is a modular collection of widgets and tools for building advanced Telegram bots using [Aiogram](https://aiogram.dev/). It simplifies the creation of user interfaces with inline keyboards, time selectors, calendars, paginators, and checkboxes — all with a clean API and optional callback handling.
 
 ---
 
-## 🔗 Quick Links
+#### Quick Links
 
 - 📦 [PyPI Package](https://pypi.org/project/aiogramx/)
 - 📚 [Documentation](https://github.com/jzr-supove/aiogramx/wiki) <!-- Optional -->
 - 🐛 [Issue Tracker](https://github.com/jzr-supove/aiogramx/issues)
 - 📬 [Submit Pull Request](https://github.com/jzr-supove/aiogramx/pulls)
-<!-- - 🤖 [Live Demo Bot](https://t.me/your_demo_bot) -->
+<!-- - 🤖 [Live Demo Bot](https://t.me/aiogramx_demobot) -->
+
+</td>
+
+<td align="right">
+    <img src="https://i.imgur.com/6jxmiEl.png" alt="AiogramX Logo" width="500px"/>
+</td>
+</tr>
+</table>
 
 ---
 
 
 ## ✨ Features
-- Time selection widgets (grid and modern)
 - Paginator with lazy loading support
 - Interactive calendar with date selection
 - Versatile checkbox component
+- Time selection widgets (grid and modern)
 - Easy integration and custom callbacks
 - Full compatibility with aiogram 3.x
 
@@ -58,54 +70,9 @@ pip install aiogramx
 
 ## 📚 Components
 
-### ⏰  Time Selectors
-
-#### Basic usage
-
-```python
-from aiogramx import TimeSelectorGrid
-
-TimeSelectorGrid.register(dp)
-
-@dp.message(Command("grid"))
-async def grid_kb_handler(m: Message):
-    ts_grid = TimeSelectorGrid()
-    await m.answer(text="Time Selector Grid", reply_markup=ts_grid.render_kb())
-```
-
-#### Advanced usage with callback functions
-
-```python
-from aiogramx import TimeSelectorModern
-
-TimeSelectorModern.register(dp)
-
-@dp.message(Command("modern"))
-async def modern_ts_handler(m: Message):
-    async def on_select(c: CallbackQuery, time_obj: time):
-        await c.message.edit_text(text=f"Time selected: {time_obj.strftime('%H:%M')}")
-        await c.answer()
-
-    async def on_back(c: CallbackQuery):
-        await c.message.edit_text(text="Operation Canceled")
-        await c.answer()
-
-    ts_modern = TimeSelectorModern(
-        allow_future_only=True,
-        on_select=on_select,
-        on_back=on_back,
-        lang=m.from_user.language_code,
-    )
-
-    await m.answer(
-        text="Time Selector Modern",
-        reply_markup=ts_modern.render_kb(offset_minutes=5),
-    )
-```
-
 ### 📄 Paginator
 
-#### Basic Example
+#### Basic usage example
 ```python
 from aiogramx import Paginator
 
@@ -229,7 +196,7 @@ async def calendar_handler(m: Message):
 
 ### ☑️ Checkbox
 
-#### Basic usage example
+#### Basic usage
 
 ```python
 from aiogramx import Checkbox
@@ -242,7 +209,7 @@ async def checkbox2_handler(m: Message):
     await m.answer(text="Checkbox Demo 2", reply_markup=await ch.render_kb())
 ```
 
-#### Advanced usage example with callback functions
+#### Advanced usage with callback functions
 
 ```python
 from aiogramx import Checkbox
@@ -283,6 +250,53 @@ async def checkbox_handler(m: Message):
     )
     await m.answer(text="Checkbox Demo", reply_markup=await ch.render_kb())
 ```
+
+### ⏰  Time Selectors
+
+#### Basic usage
+
+```python
+from aiogramx import TimeSelectorGrid
+
+TimeSelectorGrid.register(dp)
+
+@dp.message(Command("grid"))
+async def grid_kb_handler(m: Message):
+    ts_grid = TimeSelectorGrid()
+    await m.answer(text="Time Selector Grid", reply_markup=ts_grid.render_kb())
+```
+
+#### Advanced usage with callback functions
+
+```python
+from aiogramx import TimeSelectorModern
+
+TimeSelectorModern.register(dp)
+
+@dp.message(Command("modern"))
+async def modern_ts_handler(m: Message):
+    async def on_select(c: CallbackQuery, time_obj: time):
+        await c.message.edit_text(text=f"Time selected: {time_obj.strftime('%H:%M')}")
+        await c.answer()
+
+    async def on_back(c: CallbackQuery):
+        await c.message.edit_text(text="Operation Canceled")
+        await c.answer()
+
+    ts_modern = TimeSelectorModern(
+        allow_future_only=True,
+        on_select=on_select,
+        on_back=on_back,
+        lang=m.from_user.language_code,
+    )
+
+    await m.answer(
+        text="Time Selector Modern",
+        reply_markup=ts_modern.render_kb(offset_minutes=5),
+    )
+```
+
+For more usage examples and details, see [examples](./examples)
 
 ## 🧪 Contributing
 Contributions are welcome! If you'd like to add new widgets or improve existing ones, feel free to open issues or submit pull requests.
