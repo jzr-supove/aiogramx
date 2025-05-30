@@ -160,7 +160,7 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
 
         if data.action == "CHECK":
             self._options[data.arg]["flag"] = not self._options[data.arg]["flag"]
-            await c.message.edit_reply_markup(reply_markup=await self.render_kb())
+            await c.message.edit_reply_markup(reply_markup=self.render_kb())
 
         elif data.action == "DONE":
             if not self._can_select_none and not self.is_selected_any():
