@@ -72,6 +72,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
             The second argument is the original `callback_data` from the button.
         on_back (Optional[Callable[[CallbackQuery], Awaitable[None]]]):
             Callback function to be triggered when the "Go Back" button is pressed.
+        back_button_text (Optional[str]): Custom label for the "Back" button.
 
     Raises:
         ValueError: If both or neither `data` and `lazy_data` are provided.
@@ -91,6 +92,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
         on_select: Optional[Callable[[CallbackQuery, str], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
         lang: Optional[str] = "en",
+        back_button_text: Optional[str] = None,
     ) -> None:
         if not (data or lazy_data):
             raise ValueError("You must provide either 'data' or 'lazy_data', not both.")
@@ -121,6 +123,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
         self.on_select = on_select
         self.on_back = on_back
         self.lang = fallback_lang(lang)
+        self._back_button_text = back_button_text or _TEXTS[self.lang]["back"]
 
         super().__init__()
 
@@ -211,7 +214,7 @@ class Paginator(WidgetBase[PaginatorCB, "Paginator"]):
 
         builder.row(first, left, info, right, last)
         if self.on_back:
-            builder.row(ibtn(text=_TEXTS[self.lang]["back"], cb=self._(action="BACK")))
+            builder.row(ibtn(text=self._back_button_text, cb=self._(action="BACK")))
 
     async def render_kb(self, page: int = 1) -> InlineKeyboardMarkup:
         """Renders the complete inline keyboard for a given page.

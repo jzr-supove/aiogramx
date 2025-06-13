@@ -5,11 +5,14 @@
 [![Downloads](https://static.pepy.tech/personalized-badge/aiogramx?period=month&units=international_system&left_color=gray&right_color=blue&left_text=downloads/month)](https://pepy.tech/project/aiogramx)
 [![GitHub stars](https://img.shields.io/github/stars/jzr-supove/aiogramx?style=social)](https://github.com/jzr-supove/aiogramx)
 
+> ⭐ If you find this project useful, please consider starring the repository!
+It helps others discover the project and motivates me to keep improving it with new features and updates.
+
 <table>
 <tr>
 <td width="60%">
     
-AiogramX is a modular collection of widgets and tools for building advanced Telegram bots using [Aiogram](https://aiogram.dev/). It simplifies the creation of user interfaces with inline keyboards, time selectors, calendars, paginators, and checkboxes — all with a clean API and optional callback handling.
+AiogramX (Aiogram eXtensions) is a modular collection of widgets and tools for building advanced Telegram bots using [Aiogram](https://aiogram.dev/). It simplifies the creation of user interfaces with inline keyboards, time selectors, calendars, paginators, and checkboxes — all with a clean API and optional callback handling.
 
 ---
 
@@ -33,12 +36,13 @@ AiogramX is a modular collection of widgets and tools for building advanced Tele
 
 
 ## ✨ Features
-- Paginator with lazy loading support
-- Interactive calendar with date selection
-- Versatile checkbox component
-- Time selection widgets (grid and modern)
+- **Paginator** with lazy loading support
+- Interactive **calendar** with date selection
+- Versatile **checkbox** component
+- **Time selection** widgets (grid and modern)
+- Static class-style reply keyboard builder
 - Easy integration and custom callbacks
-- Full compatibility with aiogram 3.x
+- Full compatibility with **aiogram 3.x**
 
 
 ## 🚀 Why AiogramX?
@@ -295,6 +299,58 @@ async def modern_ts_handler(m: Message):
         reply_markup=ts_modern.render_kb(offset_minutes=5),
     )
 ```
+
+### 🔘  Static Reply Keyboard Builder
+
+A convenient way to define static reply menus using class-style syntax.
+
+#### Usage example:
+
+```python
+class ExampleKB(metaclass=ReplyKeyboardMeta):
+    B1 = "Button 1"
+    B2 = "Button 2"
+    B3 = "Button 3"
+    B4 = "Button 4"
+    HELP = "🆘 Help"
+
+    __LAYOUT__ = [
+        [B1, B2],
+        [HELP],
+        [B4, B3],
+    ]
+
+
+@dp.message(Command("keyboard"))
+async def reply_keyboard(m: Message):
+    await m.answer("📋 Reply Keyboard Example", reply_markup=ExampleKB.kb)
+
+
+@dp.message(F.text.in_(ExampleKB))
+async def example_kb_handler(m: Message):
+    if m.text == ExampleKB.B1:
+        await m.answer("B1 is pressed!")
+
+    elif m.text == ExampleKB.B2:
+        await m.answer(f"'{ExampleKB.B2}' is pressed!")
+
+    elif m.text == ExampleKB.B3:
+        await m.answer(f"{ExampleKB.B3!r} is pressed!")
+
+    elif m.text == ExampleKB.B4:
+        await m.answer("B4 is pressed!")
+
+    elif m.text == ExampleKB.HELP:
+        await m.answer("Help message")
+```
+
+**Features**:
+- Button labels are defined as class attributes.
+- Optional `__LAYOUT__` controls button arrangement, defaults to single button per row
+- Access `ExampleKB.kb` to get the ready-to-use `ReplyKeyboardMarkup`.
+- Iterate or check membership via `in`, `for`, or indexing (`ExampleKB[0]`).
+
+---
 
 For more usage examples and details, see [examples](./examples)
 

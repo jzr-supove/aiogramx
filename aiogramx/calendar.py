@@ -11,6 +11,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogramx.base import WidgetBase
 from aiogramx.utils import ibtn, fallback_lang
 
+
 _TEXTS = {
     "en": {
         "TODAY": "Today",
@@ -91,7 +92,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
     displaying quick buttons for selecting today, tomorrow, or the day after tomorrow.
 
     Args:
-        max_range ("Optional[timedelta]"): The maximum allowed future range from today.
+        max_range (timedelta): The maximum allowed future range from today.
         can_select_past (bool): Whether users are allowed to select past dates.
         show_quick_buttons (bool): Whether to show quick selection buttons for
             "Today", "Tomorrow", and "Overmorrow".
@@ -100,9 +101,10 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         on_back (Optional[Callable[[CallbackQuery], Awaitable[None]]]):
             Callback function called when the back button is pressed.
         lang (str): Language code for localization.
-        warn_past_text (str): Text shown when a past date is selected and not allowed.
-        warn_future_text (str): Text shown when a date outside the allowed future
+        warn_past_text (Optional[str]): Text shown when a past date is selected and not allowed.
+        warn_future_text (Optional[str]): Text shown when a date outside the allowed future
             range is selected.
+        back_button_text (Optional[str]): Custom label for the "Back" button.
 
     Methods:
         render_kb(year: Optional[int] = None, month: Optional[int] = None)
@@ -129,6 +131,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         lang: Optional[str] = "en",
         warn_past_text: Optional[str] = None,
         warn_future_text: Optional[str] = None,
+        back_button_text: Optional[str] = None,
     ):
         self.max_range = max_range
         self._can_select_past = can_select_past
@@ -137,8 +140,9 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         self.on_back = on_back
 
         self.lang = fallback_lang(lang)
-        self._warn_past_txt = warn_past_text or self._t("WARN_PAST")
-        self._warn_future_txt = warn_future_text or self._t("WARN_FUTURE")
+        self._warn_past_text = warn_past_text or self._t("WARN_PAST")
+        self._warn_future_text = warn_future_text or self._t("WARN_FUTURE")
+        self._back_button_text = back_button_text or self._t("BACK")
 
         super().__init__()
 
@@ -326,7 +330,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
         kb.row(prev_year_btn, empty_btn, next_year_btn)
 
         # Back Navigator
-        kb.row(ibtn(self._t("BACK"), self._cb(action="BACK", key=self._key)))
+        kb.row(ibtn(self._back_button_text, self._cb(action="BACK", key=self._key)))
         return kb.as_markup()
 
     async def process_cb(
@@ -353,10 +357,10 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
             await c.answer(cache_time=60)
 
         elif data.action == "WARN_PAST":
-            await c.answer(self._warn_past_txt, show_alert=True)
+            await c.answer(self._warn_past_text, show_alert=True)
 
         elif data.action == "WARN_FUTURE":
-            await c.answer(self._warn_future_txt, show_alert=True)
+            await c.answer(self._warn_future_text, show_alert=True)
 
         elif data.action == "BACK":
             if self.on_back:

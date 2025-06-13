@@ -91,6 +91,8 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
             the user presses "Done". Defaults to None.
         on_back (Optional[Callable[[CallbackQuery], Awaitable[None]]], optional): Async callback invoked when the user
             presses "Back". If set and `has_back_button` is not explicitly True, the button will still be shown.
+        done_button_text (Optional[str]): Custom label for the "Done" button.
+        back_button_text (Optional[str]): Custom label for the "Back" button.
     """
 
     _cb = CheckboxCB
@@ -103,6 +105,8 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         lang: Optional[str] = "en",
         on_select: Optional[Callable[[CallbackQuery, dict], Awaitable[None]]] = None,
         on_back: Optional[Callable[[CallbackQuery], Awaitable[None]]] = None,
+        done_button_text: Optional[str] = None,
+        back_button_text: Optional[str] = None,
     ):
         self._options = {}
 
@@ -127,6 +131,9 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         self.on_select = on_select
         self.on_back = on_back
         self.lang = fallback_lang(lang)
+
+        self._back_button_text = back_button_text or _TEXTS[self.lang]["back"]
+        self._done_button_text = done_button_text or _TEXTS[self.lang]["done"]
 
         super().__init__()
 
@@ -214,14 +221,14 @@ class Checkbox(WidgetBase[CheckboxCB, "Checkbox"]):
         kb.adjust(2)
         kb.row(
             ibtn(
-                text=_TEXTS[self.lang]["done"],
+                text=self._done_button_text,
                 cb=self._cb(action="DONE", key=self._key),
             )
         )
         if self._has_back_button:
             kb.row(
                 ibtn(
-                    text=_TEXTS[self.lang]["back"],
+                    text=self._back_button_text,
                     cb=self._cb(action="BACK", key=self._key),
                 )
             )

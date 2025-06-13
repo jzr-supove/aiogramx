@@ -27,6 +27,7 @@ async def modern_ts_handler(m: Message):
 
     ts_modern = TimeSelectorModern(
         allow_future_only=True,
+        carry_over=True,
         on_select=on_select,
         on_back=on_back,
         lang=m.from_user.language_code,

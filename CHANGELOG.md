@@ -6,10 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## [3.1.3] - 2025-06-13
+
 ### Added
-- Introduced [CHANGELOG.md](./CHANGELOG.md) to track project changes
-- Added tags for versioning
-- Added CI/CD workflow for automated PyPI releases
+- Introduced a static reply keyboard builder via `ReplyKeyboardMeta` for defining reply menus using class-style syntax.
+- Added `carry_over` option to time selectors for automatic hour adjustment on minute overflow/underflow.
+- Added support for custom labels on "Done" and "Back" buttons in time selector widgets.
+- Included new examples demonstrating reply keyboards and updated time selector usage.
+- Created [CHANGELOG.md](./CHANGELOG.md) to track versioned changes.
+- Added version tags for releases.
+- Added CI/CD workflow for automated PyPI publishing.
+
+### Fixed
+- Updated [pyproject.toml](pyproject.toml) to include only the `aiogramx` package.
+
+### Changed
+- Refactored internal codebase for improved readability and maintainability.
+
 
 ## [v3.1.2] - 2025-05-30
 

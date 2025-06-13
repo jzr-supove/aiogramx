@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiogramx"
-version = "3.1.2"
+version = "3.1.3"
 authors = [{ name = "Jasur Yusupov", email = "jasuryusupov14@gmail.com" }]
 maintainers = [{ name = "Jasur Yusupov", email = "jasuryusupov14@gmail.com" }]
 description = "Widgets and tools for Aiogram bots"
@@ -41,4 +41,6 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-exclude = ["demo"]
+where = ["."]
+include = ["aiogramx*"]
+exclude = ["demo*", "dist*", "examples*", "tests*"]

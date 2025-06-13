@@ -1,15 +1,23 @@
 import asyncio
 from datetime import date, timedelta, time
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 from aiogram.client.default import DefaultBotProperties
 from aiogram.filters import Command, CommandObject
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery, Message, InlineKeyboardButton, BotCommand
 
-from aiogramx import Checkbox, Calendar, TimeSelectorGrid, TimeSelectorModern, Paginator
+from aiogramx import (
+    Checkbox,
+    Calendar,
+    TimeSelectorGrid,
+    TimeSelectorModern,
+    Paginator,
+    ReplyKeyboardMeta,
+)
 from config import BOT_TOKEN, HELP_ARGS
-from helper import extract_pager_data, extract_time_selector_data
+from helper import extract_pager_data, extract_time_selector_data, boolmoji, langmoji
+
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
 dp = Dispatcher()
@@ -28,6 +36,7 @@ commands = {
     "checkbox": "Checkbox Demo",
     "calendar": "Calendar Demo",
     "time": "Time Selector Demo",
+    "keyboard": "Reply Keyboard Demo",
 }
 
 bot_commands = [BotCommand(command=k, description=v) for k, v in commands.items()]
@@ -139,7 +148,7 @@ async def start_pages_demo(m: Message, command: CommandObject):
 
 @dp.message(Command("time"))
 async def start_time_selector_demo(m: Message, command: CommandObject):
-    lang, ts_type = extract_time_selector_data(command.args)
+    lang, ts_type, future_only, carry_over = extract_time_selector_data(command.args)
 
     async def on_select(cq: CallbackQuery, time_obj: time):
         await cq.message.edit_text(text=f"⏰ Selected time: <b>{time_obj}</b>")
@@ -150,12 +159,68 @@ async def start_time_selector_demo(m: Message, command: CommandObject):
         await cq.answer()
 
     t_class = TimeSelectorGrid if ts_type == "grid" else TimeSelectorModern
-    ts = t_class(on_select=on_select, on_back=on_back, lang=lang)
-    await m.answer(text="⏰ Time Selector Demo", reply_markup=ts.render_kb())
+    ts = t_class(
+        allow_future_only=future_only,
+        carry_over=carry_over,
+        on_select=on_select,
+        on_back=on_back,
+        lang=lang,
+        done_button_text="✅ Done",
+        back_button_text="🔙 Cancel",
+    )
+
+    text = (
+        f"<b>⏰ Time Selector Demo</b>\n\n"
+        f"Settings:\n"
+        f"- Type: <b>{ts_type.title()}</b>\n"
+        f"- Allow future only: {boolmoji(future_only)}\n"
+        f"- Carry over: {boolmoji(carry_over)}\n"
+        f"- Language: {langmoji(lang)}"
+    )
+    await m.answer(text=text, reply_markup=ts.render_kb())
+
+
+class TestRKB(metaclass=ReplyKeyboardMeta, input_field_placeholder="👇 Demo buttons"):
+    GREET = "👋 Say Hello"
+    ASK = "❓ Ask Something"
+    JOKE = "😂 Tell a Joke"
+    CANCEL = "❌ Cancel"
+    HELP = "🆘 Help"
+
+    __LAYOUT__ = [
+        [GREET, ASK],
+        [HELP],
+        [JOKE, CANCEL],
+    ]
+
+
+@dp.message(Command("keyboard"))
+async def reply_keyboard_demo(m: Message):
+    await m.answer("📋 Reply Keyboard Demo", reply_markup=TestRKB.kb)
+
+
+@dp.message(F.text.in_(TestRKB))
+async def test_kb_handler(m: Message):
+    if m.text == TestRKB.GREET:
+        await m.answer("Hello there! 👋")
+
+    elif m.text == TestRKB.ASK:
+        await m.answer("Sure, what do you want to ask?")
+
+    elif m.text == TestRKB.JOKE:
+        joke = "Why did the Python programmer go hungry? Because he couldn't 'byte'!"
+        await m.answer(joke)
+
+    elif m.text == TestRKB.CANCEL:
+        await m.answer("👌 Keyboard is closed", reply_markup=TestRKB.remove)
+
+    elif m.text == TestRKB.HELP:
+        await m.answer("🔘 Use the buttons to interact with the bot!")
 
 
 async def main():
     await bot.set_my_commands(bot_commands)
+    print(f"✅ Demo bot @{(await bot.me()).username} is up and running!")
     await dp.start_polling(bot)
 
 
