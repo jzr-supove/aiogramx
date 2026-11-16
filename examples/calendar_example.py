@@ -1,10 +1,9 @@
 import asyncio
-from datetime import date
+from datetime import date, timedelta
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
-from asyncpg.pgproto.pgproto import timedelta
 
 from config import BOT_TOKEN
 from aiogramx import Calendar
@@ -31,7 +30,7 @@ async def calendar_handler(m: Message):
         on_select=on_select,
         on_back=on_back,
     )
-    await m.answer(text="Calendar Demo", reply_markup=await c.render_kb())
+    await m.answer(text="Calendar Demo", reply_markup=c.render_kb())
 
 
 async def main():

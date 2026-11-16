@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [3.1.4] - 2026-11-16
+
+### Fixed
+- `Calendar.get_expired_text()` raised `KeyError` for any language other than `en`, `ru` and `uz`. Unknown language codes now fall back to English, like the other widgets.
+
+### Docs
+- README and examples awaited `Calendar.render_kb()` and `Checkbox.render_kb()`, which are synchronous, so the snippets raised `TypeError`. Only `Paginator.render_kb()` is async.
+- `examples/calendar_example.py` imported `timedelta` from `asyncpg`; it now comes from `datetime`.
+
+### Added
+- First test suite (`uv run pytest`): language fallback for every widget, offline.
 
 ## [3.1.3] - 2025-06-13
 

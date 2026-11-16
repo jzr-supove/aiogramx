@@ -44,13 +44,13 @@ async def checkbox_handler(m: Message):
         on_select=on_select,
         on_back=on_back,
     )
-    await m.answer(text="Checkbox Demo", reply_markup=await ch.render_kb())
+    await m.answer(text="Checkbox Demo", reply_markup=ch.render_kb())
 
 
 @dp.message(Command("checkbox2"))
 async def checkbox2_handler(m: Message):
     ch = Checkbox(["Option 1", "Option 2", "Option 3"])
-    await m.answer(text="Checkbox Demo 2", reply_markup=await ch.render_kb())
+    await m.answer(text="Checkbox Demo 2", reply_markup=ch.render_kb())
 
 
 async def main():

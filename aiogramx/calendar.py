@@ -170,7 +170,7 @@ class Calendar(WidgetBase[CalendarCB, "Calendar"]):
             str: The expired keyboard message in the selected language.
         """
 
-        return _TEXTS[lang]["EXPIRED"]
+        return _TEXTS.get(lang, _TEXTS["en"])["EXPIRED"]
 
     def render_kb(
         self, year: Optional[int] = None, month: Optional[int] = None
